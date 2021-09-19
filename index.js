@@ -5,5 +5,5 @@ const app = express();
 app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
 
 app.get('/atendimentos', (req, res) => {
-  res.send('Você está na rota de atendimentos e utilizando parâmetro GET. Teste')
+  res.send('Você está na rota de atendimentos e utilizando parâmetro GET.')
 })
