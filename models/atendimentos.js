@@ -35,10 +35,63 @@ class Atendimento {
         if (erro) {
           res.status(400).json(erro);
         } else {
-          res.status(201).json(resultados)
+          res.status(201).json(atendimento)
         }
       }) // o segundo parâmetro pode ser um objeto recebido através do parâmetro POST. Exemplo: {cliente: 'Matheus', pet: 'Bob'}
     }
+  }
+
+  lista(res) {
+    const sql = 'SELECT * FROM Atendimentos'
+
+    conexao.query(sql, (erro, resultados) => {
+      if (erro) {
+        res.status(400).json(erro)
+      } else {
+        res.status(200).json(resultados)
+      }
+    })
+  }
+
+  buscaPorId(id, res) {
+    const sql = `SELECT * FROM Atendimentos WHERE id=${id}`
+
+    conexao.query(sql, (erro, resultados) => {
+      if (erro) {
+        res.status(400).json(erro)
+      } else {
+        res.status(200).json(resultados[0]) //Devolvemos o primeiro, dessa forma deixa de ser um array de objetos e sempre apenas um será listado um objeto
+      }
+    })
+  }
+
+  altera(id, valores, res) {
+    if (valores.data) {
+      valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss')
+    }
+
+    const sql = `UPDATE Atendimentos SET ? WHERE Id=?`
+
+    conexao.query(sql, [valores, id], (erro, resultados) => { //[valores, id] -> o primeiro '?' recebe 'valores', enquanto o segundo '?' recebe 'id'
+      if (erro) {
+        res.status(400).json(erro)
+      } else {
+        //res.status(200).json(resultados)
+        res.status(200).json({ ...valores, id })
+      }
+    })
+  }
+
+  deleta(id, res) {
+    const sql = `DELETE FROM Atendimentos WHERE id = ${id}`
+
+    conexao.query(sql, (erro, resultados) => {
+      if (erro) {
+        res.status(400).json(erro)
+      } else {
+        res.status(200).json({ id: `${id} - [DELETADO]` })
+      }
+    })
   }
 }
 
