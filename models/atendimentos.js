@@ -1,3 +1,4 @@
+const axios = require("axios")
 const moment = require("moment")
 const conexao = require("../infraestrutura/conexao")
 class Atendimento {
@@ -56,11 +57,16 @@ class Atendimento {
   buscaPorId(id, res) {
     const sql = `SELECT * FROM Atendimentos WHERE id=${id}`
 
-    conexao.query(sql, (erro, resultados) => {
+    conexao.query(sql, async (erro, resultados) => { //precisa do async, pois iremos requisitar algo
+      const atendimento = resultados[0] //Devolvemos o primeiro, dessa forma deixa de ser um array de objetos e sempre apenas um será listado um objeto
+      const cpf = atendimento.cliente
       if (erro) {
         res.status(400).json(erro)
       } else {
-        res.status(200).json(resultados[0]) //Devolvemos o primeiro, dessa forma deixa de ser um array de objetos e sempre apenas um será listado um objeto
+        const { data } = await axios.get(`http://localhost:8082/${cpf}`)
+        console.log(data)
+        atendimento.cliente = data
+        res.status(200).json(atendimento)
       }
     })
   }
