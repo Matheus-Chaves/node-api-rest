@@ -11,3 +11,5 @@ const executaQuery = (query, parametros = '') => { //Coloca-se string vazia para
     })
   })
 }
+
+module.exports = executaQuery

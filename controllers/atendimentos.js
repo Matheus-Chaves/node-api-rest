@@ -5,7 +5,9 @@ const Atendimento = require('../models/atendimentos')
 
 module.exports = app => {
   app.get('/atendimentos', (req, res) => {
-    Atendimento.lista(res)
+    Atendimento.lista()
+      .then(resultados => res.json(resultados)) //quando o status é 200, não é necessário colocar .status(200), pois este é o padrão
+      .catch(erros => res.status(400).json(erros))
   })
 
   app.get('/atendimentos/:id', (req, res) => {
@@ -18,7 +20,9 @@ module.exports = app => {
   app.post('/atendimentos', (req, res) => {
     const atendimento = req.body
 
-    Atendimento.adiciona(atendimento, res)
+    Atendimento.adiciona(atendimento)
+      .then(atendimentoCadastrado => res.status(201).json(atendimentoCadastrado)) //recebe o retorno da promise do model atendimentos.js, que recebe a promise do repositório atendimento.js, que recebe a promise do queries.js
+      .catch(erros => res.status(400).json(erros)) //catch trata os erros e só deve ser chamado no final, ou seja, aqui no controller, pois não pode ficar sendo jogado de arquivo em arquivo igual o nosso .then()
   })
 
   app.patch('/atendimentos/:id', (req, res) => {
