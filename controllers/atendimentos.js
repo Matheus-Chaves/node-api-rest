@@ -1,3 +1,6 @@
+//CONTROLLER tem a responsabilidade de falar para onde enviaremos as coisas,
+//responder nosso cliente. Será nosso intermediário para passar dados e recebê-los
+//validações voltadas à segurança ficam aqui também.
 const Atendimento = require('../models/atendimentos')
 
 module.exports = app => {

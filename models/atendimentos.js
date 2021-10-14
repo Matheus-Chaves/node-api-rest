@@ -1,6 +1,7 @@
+//MODEL é a camada de regra de negócios da aplicação, realiza tudo referente às regras de negócio
 const axios = require("axios")
 const moment = require("moment")
-const conexao = require("../infraestrutura/conexao")
+const conexao = require("../infraestrutura/database/conexao")
 class Atendimento {
   adiciona(atendimento, res) {
     const dataCriacao = moment().format('YYYY-MM-DD HH:mm:ss') //precisamos colocar a data de criação atual - OBS: A variavel precisa ter o mesmo nome do campo, pois depois virará um objeto no estilo {nomeVariavel: valorVariavel}
@@ -63,8 +64,7 @@ class Atendimento {
       if (erro) {
         res.status(400).json(erro)
       } else {
-        const { data } = await axios.get(`http://localhost:8082/${cpf}`)
-        console.log(data)
+        const { data } = await axios.get(`http://localhost:8082/${cpf}`) //retorna um objeto contendo o cpf, nome e dt nascimento
         atendimento.cliente = data
         res.status(200).json(atendimento)
       }
