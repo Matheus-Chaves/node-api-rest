@@ -14,7 +14,9 @@ module.exports = app => {
     //console.log(req.params) //Retorna o nome do parâmetro e seu valor. Ex.: url: /atendimentos/1 -> { id: '1'}
     const id = parseInt(req.params.id)
 
-    Atendimento.buscaPorId(id, res)
+    Atendimento.buscaPorId(id)
+      .then(atendimento => res.json(atendimento))
+      .catch(erros => res.status(400).json(erros))
   })
 
   app.post('/atendimentos', (req, res) => {
@@ -29,12 +31,16 @@ module.exports = app => {
     const id = parseInt(req.params.id)
     const valores = req.body
 
-    Atendimento.altera(id, valores, res)
+    Atendimento.altera(id, valores)
+      .then((resultado) => res.json(resultado))
+      .catch((erros) => res.status(400).json(erros))
   })
 
   app.delete('/atendimentos/:id', (req, res) => {
     const id = parseInt(req.params.id)
 
-    Atendimento.deleta(id, res)
+    Atendimento.deleta(id)
+      .then((resultado) => res.json(resultado))
+      .catch((erros) => res.status(400).json(erros))
   })
 }

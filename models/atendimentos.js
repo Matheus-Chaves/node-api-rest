@@ -60,49 +60,33 @@ class Atendimento {
     return repositorio.lista()
   }
 
-  buscaPorId(id, res) {
-    const sql = `SELECT * FROM Atendimentos WHERE id=${id}`
-
-    conexao.query(sql, async (erro, resultados) => { //precisa do async, pois iremos requisitar algo
-      const atendimento = resultados[0] //Devolvemos o primeiro, dessa forma deixa de ser um array de objetos e sempre apenas um será listado um objeto
-      const cpf = atendimento.cliente
-      if (erro) {
-        res.status(400).json(erro)
-      } else {
+  buscaPorId(id) {
+    return repositorio.buscaPorId(id)
+      .then(async (resultados) => {
+        const atendimento = resultados[0] //Devolvemos o primeiro, dessa forma deixa de ser um array de objetos e sempre apenas um será listado um objeto
+        const cpf = atendimento.cliente
         const { data } = await axios.get(`http://localhost:8082/${cpf}`) //retorna um objeto contendo o cpf, nome e dt nascimento
         atendimento.cliente = data
-        res.status(200).json(atendimento)
-      }
-    })
+        return { atendimento }
+      })
   }
 
-  altera(id, valores, res) {
+  altera(id, valores) {
     if (valores.data) {
       valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss')
     }
 
-    const sql = `UPDATE Atendimentos SET ? WHERE Id=?`
-
-    conexao.query(sql, [valores, id], (erro, resultados) => { //[valores, id] -> o primeiro '?' recebe 'valores', enquanto o segundo '?' recebe 'id'
-      if (erro) {
-        res.status(400).json(erro)
-      } else {
-        //res.status(200).json(resultados)
-        res.status(200).json({ ...valores, id })
-      }
-    })
+    return repositorio.altera(id, valores)
+      .then((resultados) => {
+        return { ...valores, id }
+      })
   }
 
-  deleta(id, res) {
-    const sql = `DELETE FROM Atendimentos WHERE id = ${id}`
-
-    conexao.query(sql, (erro, resultados) => {
-      if (erro) {
-        res.status(400).json(erro)
-      } else {
-        res.status(200).json({ id: `${id} - [DELETADO]` })
-      }
-    })
+  deleta(id) {
+    return repositorio.deleta(id)
+      .then((resultados) => {
+        return ({ id: `${id} - [DELETADO]` })
+      })
   }
 }
 
